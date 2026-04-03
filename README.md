@@ -1,82 +1,170 @@
-# Anas_ML_OPS — Credit Risk Prediction + MCP Server
+\# Anas\_ML\_OPS — Credit Risk Prediction + LLM Assistant
 
-A machine learning model that predicts credit default risk, exposed via an MCP server to be used by a LLM (Claude).
 
-## Architecture
 
+A machine learning model that predicts credit default risk, connected to a 
+
+Groq LLM (Llama 3.3) that can answer questions in natural language.
+
+
+
+\## Architecture
 
 Dataset CSV → Training (scikit-learn) → model.pkl
-                                                 ↓
-                                          FastAPI /predict
-                                                 ↓
-                                         MCP Server (tool)
-                                                 ↓
-                                      LLM (Claude Desktop)
-```
 
-## Installation
+↓
+
+predict.py (ML tool)
+
+↓
+
+Groq LLM (Llama 3.3-70b)
+
+↓
+
+chat.py (natural language)
+
+↓
+
+User
+
+
+
+## \## Installation
+
+## 
+
+## \### 1. Clone the repository
+
+## ```bash
+
+## git clone https://github.com/b00832170-glitch/Anas\_ML\_OPS.git
+
+## cd Anas\_ML\_OPS
+
+## ```
+
+## 
+
+## \### 2. Install dependencies
+
+## ```bash
+
+## pip install -r requirements.txt
+
+## ```
+
+## 
+
+## \### 3. Train the model
+
+## ```bash
+
+## python ml/train.py
+
+## ```
+
+## 
+
+## \### 4. Set up your Groq API key
+
+## \- Create a free account at https://console.groq.com
+
+## \- Generate an API key
+
+## \- Create a `.env` file in the project root:
+
+
+
+GROQ\_API\_KEY=your\_groq\_api\_key\_here
+
+
+
+\## 5. Start the AI Assistant
+
 ```bash
-pip install -r requirements.txt
+
+python chat.py
+
 ```
 
-## Usage
 
-### 1. Train the model
-```bash
-python ml/train.py
-```
 
-### 2. Start the REST API (for testing)
-```bash
-uvicorn server.main:app --reload
-# Documentation available at http://localhost:8000/docs
-```
+\## Example Questions
 
-### 3. Start the MCP server
-```bash
-python server/mcp_server.py
-```
 
-### 4. Connect to Claude Desktop
 
-In `claude_desktop_config.json` :
-```json
-{
-  "mcpServers": {
-    "credit-risk": {
-      "command": "python",
-      "args": ["/path/to/Anas_ML_OPS/server/mcp_server.py"]
-    }
-  }
-}
-```
+Once the assistant is running, you can ask:
 
-## Dataset
 
-- **Source** : `data/credit_risk_dataset.csv`
-- **Target** : `loan_status` (0 = no default, 1 = default)
-- **Model** : RandomForestClassifier
-- **Size** : 32,581 rows
 
-## Model Performance
+Is a 25-year-old renter with $50k income and a $10k personal loan grade B risky?
+
+Analyze this borrower: 22 years old, $9k income, grade F loan of $35k, past default on file
+
+What is the model accuracy?
+
+
+
+\## Dataset
+
+
+
+\- \*\*Source\*\* : `data/credit\_risk\_dataset.csv`
+
+\- \*\*Target\*\* : `loan\_status` (0 = no default, 1 = default)
+
+\- \*\*Model\*\* : RandomForestClassifier
+
+\- \*\*Size\*\* : 32,581 rows
+
+
+
+\## Model Performance
+
+
 
 | Metric | Score |
+
 |---|---|
+
 | Accuracy | 92.96% |
+
 | ROC-AUC | 92.46% |
 
-## Features
+
+
+\## Features
+
+
 
 | Feature | Type | Description |
+
 |---|---|---|
-| person_age | int | Borrower age |
-| person_income | float | Annual income |
-| person_home_ownership | str | RENT / OWN / MORTGAGE / OTHER |
-| person_emp_length | float | Employment length (years) |
-| loan_intent | str | Loan purpose |
-| loan_grade | str | Loan grade (A-G) |
-| loan_amnt | float | Loan amount |
-| loan_int_rate | float | Interest rate (%) |
-| loan_percent_income | float | Loan/income ratio |
-| cb_person_default_on_file | str | Historical default (Y/N) |
-| cb_person_cred_hist_length | int | Credit history length |
+
+| person\_age | int | Borrower age |
+
+| person\_income | float | Annual income |
+
+| person\_home\_ownership | str | RENT / OWN / MORTGAGE / OTHER |
+
+| person\_emp\_length | float | Employment length (years) |
+
+| loan\_intent | str | Loan purpose |
+
+| loan\_grade | str | Loan grade (A-G) |
+
+| loan\_amnt | float | Loan amount |
+
+| loan\_int\_rate | float | Interest rate (%) |
+
+| loan\_percent\_income | float | Loan/income ratio |
+
+| cb\_person\_default\_on\_file | str | Historical default (Y/N) |
+
+| cb\_person\_cred\_hist\_length | int | Credit history length |
+
+
+
+\## Project Structure
+
