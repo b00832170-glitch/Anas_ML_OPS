@@ -78,17 +78,17 @@ def predict(input_data: dict[str, Any]) -> dict[str, Any]:
 
     # Niveau de risque lisible
     if prob < 0.25:
-        risk_level = "Faible"
+        risk_level = "Low"
     elif prob < 0.55:
-        risk_level = "Modéré"
+        risk_level = "Moderate"
     elif prob < 0.80:
-        risk_level = "Élevé"
+        risk_level = "High"
     else:
-        risk_level = "Très élevé"
+        risk_level = "Very high"
 
     return {
         "prediction":        pred,
-        "label":             "Défaut probable" if pred == 1 else "Pas de défaut",
+        "label":             "Likely Default" if pred == 1 else "No default",
         "probability_default": round(prob, 4),
         "risk_level":        risk_level,
         "model_accuracy":    _metadata["accuracy"],
