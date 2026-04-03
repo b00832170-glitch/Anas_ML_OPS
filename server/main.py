@@ -1,5 +1,5 @@
 """
-server/main.py - API REST FastAPI pour le modèle de credit risk
+server/main.py - FastAPI REST API for the credit risk model
 """
 
 from fastapi import FastAPI, HTTPException
@@ -7,18 +7,16 @@ from pydantic import BaseModel, Field
 import sys
 from pathlib import Path
 
-# Permet d'importer le module ml depuis n'importe où
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ml.predict import predict, get_model_info
 
 app = FastAPI(
     title="Credit Risk Prediction API",
-    description="Prédit le risque de défaut de crédit via un modèle RandomForest.",
+    description="Predicts credit default risk using a RandomForest model.",
     version="1.0.0",
 )
 
 
-# ── Schéma d'entrée ────────────────────────────────────────────────────────────
 class LoanRequest(BaseModel):
     person_age:                  int   = Field(..., example=25, ge=18, le=100)
     person_income:               float = Field(..., example=50000)
@@ -33,7 +31,6 @@ class LoanRequest(BaseModel):
     cb_person_cred_hist_length:  int   = Field(..., example=4)
 
 
-# ── Endpoints ──────────────────────────────────────────────────────────────────
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -57,5 +54,5 @@ def predict_endpoint(req: LoanRequest):
     except FileNotFoundError:
         raise HTTPException(
             status_code=503,
-            detail="Modèle non trouvé. Lance d'abord : python ml/train.py",
+            detail="Model not found. Run first: python ml/train.py",
         )

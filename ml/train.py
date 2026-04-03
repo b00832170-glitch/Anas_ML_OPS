@@ -1,6 +1,6 @@
 """
-train.py - Entraînement du modèle de prédiction de risque crédit
-Target : loan_status (0 = pas de défaut, 1 = défaut)
+train.py - Training a prediction model of credit default
+Target : loan_status (0 = no default, 1 = default)
 """
 
 import pandas as pd
@@ -18,26 +18,26 @@ from sklearn.metrics import (
     accuracy_score,
 )
 
-# ── Chemins ────────────────────────────────────────────────────────────────────
+# Ways
 BASE_DIR  = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data" / "credit_risk_dataset.csv"
 MODEL_DIR = BASE_DIR / "ml"
 
-# ── 1. Chargement ──────────────────────────────────────────────────────────────
-print("📂 Chargement du dataset...")
+# Loading
+print("Loading dataset")
 df = pd.read_csv(DATA_PATH)
-print(f"   {df.shape[0]} lignes, {df.shape[1]} colonnes")
+print(f"   {df.shape[0]} rows, {df.shape[1]} columns")
 
-# ── 2. Nettoyage ───────────────────────────────────────────────────────────────
-print("🧹 Nettoyage...")
+# Cleaning
+print("Cleaning")
 df = df.dropna()
 
-# Suppression des outliers évidents (âge > 100, emp_length > 60)
+# Deleting obvious outliers (âge > 100, emp_length > 60)
 df = df[df["person_age"] <= 100]
 df = df[df["person_emp_length"] <= 60]
 
-# ── 3. Encodage des variables catégorielles ────────────────────────────────────
-print("🔠 Encodage des variables catégorielles...")
+# Encoding categorical variables
+print("Encoding categorical variables")
 categorical_cols = [
     "person_home_ownership",
     "loan_intent",
@@ -51,7 +51,7 @@ for col in categorical_cols:
     df[col] = le.fit_transform(df[col])
     encoders[col] = le
 
-# ── 4. Séparation features / target ────────────────────────────────────────────
+#Separating the features from the target
 TARGET = "loan_status"
 FEATURES = [c for c in df.columns if c != TARGET]
 
@@ -59,15 +59,15 @@ X = df[FEATURES]
 y = df[TARGET]
 
 print(f"   Features : {FEATURES}")
-print(f"   Répartition target : {y.value_counts().to_dict()}")
+print(f"   Target distribution : {y.value_counts().to_dict()}")
 
-# ── 5. Split train / test ──────────────────────────────────────────────────────
+# Splitting train/test
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# ── 6. Entraînement ────────────────────────────────────────────────────────────
-print("🤖 Entraînement du RandomForest...")
+#Training the model
+print("Training Random Forest")
 model = RandomForestClassifier(
     n_estimators=200,
     max_depth=12,
@@ -77,24 +77,24 @@ model = RandomForestClassifier(
 )
 model.fit(X_train, y_train)
 
-# ── 7. Évaluation ──────────────────────────────────────────────────────────────
+# Evaluation
 y_pred  = model.predict(X_test)
 y_proba = model.predict_proba(X_test)[:, 1]
 
 accuracy = accuracy_score(y_test, y_pred)
 roc_auc  = roc_auc_score(y_test, y_proba)
 
-print("\n📊 Résultats sur le jeu de test :")
+print("\nResults :")
 print(f"   Accuracy : {accuracy:.4f}")
 print(f"   ROC-AUC  : {roc_auc:.4f}")
 print("\n" + classification_report(y_test, y_pred, target_names=["No default", "Default"]))
 
-# ── 8. Sauvegarde ──────────────────────────────────────────────────────────────
-print("💾 Sauvegarde du modèle et des encodeurs...")
+# Saving
+print("Saving model and encoders...")
 joblib.dump(model,    MODEL_DIR / "model.pkl")
 joblib.dump(encoders, MODEL_DIR / "encoders.pkl")
 
-# Métadonnées lisibles par le serveur MCP
+# Visible data for MCP Server
 metadata = {
     "features":        FEATURES,
     "categorical_cols": categorical_cols,
@@ -108,7 +108,7 @@ metadata = {
 with open(MODEL_DIR / "model_metadata.json", "w") as f:
     json.dump(metadata, f, indent=2)
 
-print("✅ Entraînement terminé !")
+print("Training done")
 print(f"   → ml/model.pkl")
 print(f"   → ml/encoders.pkl")
 print(f"   → ml/model_metadata.json")
