@@ -82,6 +82,16 @@ What is the model accuracy?
 | cb_person_default_on_file | str | Historical default (Y/N) |
 | cb_person_cred_hist_length | int | Credit history length |
 
+## Exploratory Data Analysis
+
+The dataset was analyzed before training. The notebook includes:
+- Loan status distribution (default vs no default)
+- Default rate by loan grade, home ownership, and loan intent
+- Borrower age and loan amount distributions
+- Feature importance from the trained RandomForest model
+
+[View the EDA Notebook on GitHub](https://github.com/b00832170-glitch/Anas_ML_OPS/blob/main/notebook/exploration.ipynb)
+
 ## Project Structure
 ```
 Anas_ML_OPS/
